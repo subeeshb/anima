@@ -23,11 +23,11 @@ func Start() {
 		switch method {
 		case "GET":
 			router.GET(path, func(c *gin.Context) {
-				endpoint.Run(c)
+				endpoint.Run(&api.Request{Context: c})
 			})
 		case "POST":
 			router.POST(path, func(c *gin.Context) {
-				endpoint.Run(c)
+				endpoint.Run(&api.Request{Context: c})
 			})
 		default:
 			panic("Unsupported HTTP method")
