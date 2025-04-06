@@ -1,0 +1,26 @@
+{
+  "name": "anima",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev:webapp": "cd webapp && pnpm run dev",
+    "dev:server": "cd server && air",
+    "dev": "concurrently \"pnpm run dev:webapp\" \"pnpm run dev:server\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/subeeshb/anima.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/subeeshb/anima/issues"
+  },
+  "homepage": "https://github.com/subeeshb/anima#readme",
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
