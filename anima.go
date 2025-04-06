@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/subeeshb/anima/cli"
 	"github.com/subeeshb/anima/config"
 )
 
@@ -19,7 +20,8 @@ func main() {
 
 	switch action {
 	case "cli":
-		fmt.Println("Starting CLI...")
+		cli.Run()
+
 	case "serve":
 		fmt.Println("Starting server...")
 
