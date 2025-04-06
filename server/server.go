@@ -34,6 +34,11 @@ func Start() {
 		}
 	}
 
+	// For all other paths not handled by an endpoint, serve them from the static folder.
+	router.NoRoute(func(c *gin.Context) {
+		c.File("./web-html/" + c.Request.URL.Path)
+	})
+
 	// Get the port to run on, either from the PORT env variable, or from the app config.
 	port := os.Getenv("PORT")
 	if port == "" {
