@@ -6,6 +6,7 @@ import (
 
 	"github.com/subeeshb/anima/cli"
 	"github.com/subeeshb/anima/config"
+	"github.com/subeeshb/anima/server"
 )
 
 func main() {
@@ -23,7 +24,7 @@ func main() {
 		cli.Run()
 
 	case "serve":
-		fmt.Println("Starting server...")
+		server.Start()
 
 	default:
 		fmt.Printf("Unknown action: %s\r\n", action)
