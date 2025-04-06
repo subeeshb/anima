@@ -1,0 +1,15 @@
+.users_table {
+  width: 100%;
+}
+
+.users_table thead td {
+  background-color: var(--color-gray-light-n25);
+}
+
+.users_table tr:nth-of-type(odd) {
+  background-color: var(--color-gray-light-p12);
+}
+
+.users_table td {
+  padding: 0.25rem;
+}

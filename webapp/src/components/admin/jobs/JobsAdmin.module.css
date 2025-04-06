@@ -1,0 +1,45 @@
+.table {
+  width: 100%;
+}
+
+.table thead {
+  font-weight: bold;
+}
+
+.table thead td {
+  background-color: var(--color-gray-light-n25);
+}
+
+.table tr:nth-of-type(odd) {
+  background-color: var(--color-gray-light-p12);
+}
+
+.table td {
+  padding: 0.25rem;
+}
+
+.status_container {
+  display: flex;
+  flex-direction: row;
+}
+
+.status_icon {
+  font-size: 1.25rem;
+  margin-right: 0.25rem;
+}
+
+.status_pending {
+  color: #ffa724;
+}
+
+.status_running {
+  color: #c5e1a5;
+}
+
+.status_completed {
+  color: var(--color-highlight-green);
+}
+
+.status_failed {
+  color: var(--color-highlight-red);
+}

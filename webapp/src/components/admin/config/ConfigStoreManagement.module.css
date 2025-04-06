@@ -1,0 +1,19 @@
+.table {
+  width: 100%;
+}
+
+.table thead {
+  font-weight: bold;
+}
+
+.table thead td {
+  background-color: var(--color-gray-light-n25);
+}
+
+.table tr:nth-of-type(odd) {
+  background-color: var(--color-gray-light-p12);
+}
+
+.table td {
+  padding: 0.25rem;
+}
