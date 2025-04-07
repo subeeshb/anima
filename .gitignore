@@ -29,3 +29,6 @@ go.work.sum
 
 # Node.js
 node_modules
+
+# PocketBase
+pb_data

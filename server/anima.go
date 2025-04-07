@@ -2,31 +2,29 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
-	"github.com/subeeshb/anima/cli"
+	"github.com/pocketbase/pocketbase"
+	"github.com/pocketbase/pocketbase/apis"
+	"github.com/pocketbase/pocketbase/core"
 	"github.com/subeeshb/anima/config"
-	"github.com/subeeshb/anima/webserver"
 )
 
 func main() {
 
 	fmt.Printf("%s - v%s\r\n", config.AppName, config.AppVersion)
 
-	// Default is to start the web server, unless an explicit action is specified.
-	action := "serve"
-	if len(os.Args) > 1 {
-		action = os.Args[1]
-	}
+	app := pocketbase.New()
 
-	switch action {
-	case "cli":
-		cli.Run()
+	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
+		// serves static files from the provided public dir (if exists)
+		se.Router.GET("/{path...}", apis.Static(os.DirFS("./web-html"), false))
 
-	case "serve":
-		webserver.Start()
+		return se.Next()
+	})
 
-	default:
-		fmt.Printf("Unknown action: %s\r\n", action)
+	if err := app.Start(); err != nil {
+		log.Fatal(err)
 	}
 }
