@@ -8,8 +8,7 @@ import {
 import { useCallback, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isValidEmailAddress } from "../../utils/StringUtils";
-import LoginAPI from "../../api/endpoints/Login.api";
-import { AuthContext } from "./AuthContext";
+import { ServerContext } from "../../ServerContext";
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -17,31 +16,54 @@ const LoginForm: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { parseSessionFromToken } = useContext(AuthContext);
-
+  const { pb, setLoginSession } = useContext(ServerContext);
   const navigate = useNavigate();
 
   const onLogin = useCallback(async () => {
     setErrorMessage(null);
     setIsLoading(true);
-    const response = await new LoginAPI().fetch({
-      email,
-      password,
-    });
-    setIsLoading(false);
 
-    if (response.error != null) {
-      setErrorMessage(response.error);
-    } else {
-      if (response.success == false || response.token == null) {
-        setErrorMessage("Unable to log you in. Please try again later.");
-      } else {
-        parseSessionFromToken(response.token, true);
-        navigate(
-          new URLSearchParams(window.location.search).get("next") ?? "/"
-        );
-      }
+    try {
+      const result = await pb
+        .collection("users")
+        .authWithPassword(email, password);
+
+      setLoginSession(
+        {
+          id: result.record.id,
+          displayName: result.record.name ?? "",
+          isVerified: result.record.verified ?? false,
+        },
+        result.token
+      );
+
+      setIsLoading(false);
+      navigate(new URLSearchParams(window.location.search).get("next") ?? "/");
+    } catch (e: any) {
+      setIsLoading(false);
+      setErrorMessage(
+        e?.message ?? "Unable to log in right now. Try again later."
+      );
     }
+
+    // const response = await new LoginAPI().fetch({
+    //   email,
+    //   password,
+    // });
+    // setIsLoading(false);
+
+    // if (response.error != null) {
+    //   setErrorMessage(response.error);
+    // } else {
+    //   if (response.success == false || response.token == null) {
+    //     setErrorMessage("Unable to log you in. Please try again later.");
+    //   } else {
+    //     parseSessionFromToken(response.token, true);
+    //     navigate(
+    //       new URLSearchParams(window.location.search).get("next") ?? "/"
+    //     );
+    //   }
+    // }
   }, [email, password]);
 
   return (

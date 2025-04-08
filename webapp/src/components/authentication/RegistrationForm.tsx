@@ -9,8 +9,6 @@ import {
 import { useCallback, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isValidEmailAddress } from "../../utils/StringUtils";
-import { AuthContext } from "./AuthContext";
-import CreateAccountAPI from "../../api/endpoints/CreateAccount.api";
 
 const RegistrationForm: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -22,56 +20,48 @@ const RegistrationForm: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const { parseSessionFromToken } = useContext(AuthContext);
-
   const navigate = useNavigate();
 
   const onRegister = useCallback(async () => {
-    try {
-      setErrorMessage(null);
-      setIsSaving(true);
-
-      const result = await new CreateAccountAPI().fetch({
-        email,
-        displayName,
-        password: newPassword,
-      });
-
-      setIsSaving(false);
-
-      if (result.success == false) {
-        setErrorMessage(
-          result.error ??
-            "Unable to create your account. Please try again later."
-        );
-      } else {
-        setEmail("");
-        setNewPassword("");
-        setConfirmNewPassword("");
-
-        if (result.token != null) {
-          setSuccessMessage(
-            `Your account has been created successfully. You'll be logged in in a few seconds.`
-          );
-
-          parseSessionFromToken(result.token, true);
-
-          window.setTimeout(() => {
-            navigate(
-              new URLSearchParams(window.location.search).get("next") ?? "/"
-            );
-          }, 3000);
-        } else {
-          setSuccessMessage(
-            `Your account has been created successfully. Please log in with your email address and password.`
-          );
-        }
-      }
-    } catch (e: any) {
-      setIsSaving(false);
-      setErrorMessage(e?.message);
-    }
-  }, [email, displayName, newPassword, parseSessionFromToken]);
+    // try {
+    //   setErrorMessage(null);
+    //   setIsSaving(true);
+    //   const result = await new CreateAccountAPI().fetch({
+    //     email,
+    //     displayName,
+    //     password: newPassword,
+    //   });
+    //   setIsSaving(false);
+    //   if (result.success == false) {
+    //     setErrorMessage(
+    //       result.error ??
+    //         "Unable to create your account. Please try again later."
+    //     );
+    //   } else {
+    //     setEmail("");
+    //     setNewPassword("");
+    //     setConfirmNewPassword("");
+    //     if (result.token != null) {
+    //       setSuccessMessage(
+    //         `Your account has been created successfully. You'll be logged in in a few seconds.`
+    //       );
+    //       parseSessionFromToken(result.token, true);
+    //       window.setTimeout(() => {
+    //         navigate(
+    //           new URLSearchParams(window.location.search).get("next") ?? "/"
+    //         );
+    //       }, 3000);
+    //     } else {
+    //       setSuccessMessage(
+    //         `Your account has been created successfully. Please log in with your email address and password.`
+    //       );
+    //     }
+    //   }
+    // } catch (e: any) {
+    //   setIsSaving(false);
+    //   setErrorMessage(e?.message);
+    // }
+  }, [email, displayName, newPassword]);
 
   return (
     <>

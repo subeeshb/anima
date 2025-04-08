@@ -1,12 +1,13 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { PropsWithChildren, useContext, useEffect, useState } from "react";
-import { AuthContext } from "./AuthContext";
+
 import {
   Center,
   NoticeCard,
   SingleColumnPage,
   Spinner,
 } from "@prima-materia/ui";
+import { ServerContext } from "../../ServerContext";
 
 enum EvaluationResult {
   Loading = -1,
@@ -20,14 +21,18 @@ const AuthenticatedRoute: React.FC<
     requirePermission?: string;
   }>
 > = ({ children, requirePermission }) => {
-  const { session, currentUserHasPermission } = useContext(AuthContext);
+  // TODO
+  const currentUserHasPermission = async (_: string) => false;
+  // const { session, currentUserHasPermission } = useContext(AuthContext);
+
+  const { currentUser } = useContext(ServerContext);
   const location = useLocation();
   const [evaluationResult, setEvaluationResult] = useState<EvaluationResult>(
     EvaluationResult.Loading
   );
 
   useEffect(() => {
-    if (session == null) {
+    if (currentUser == null) {
       setEvaluationResult(EvaluationResult.PromptForLogin);
       return;
     }
@@ -42,7 +47,7 @@ const AuthenticatedRoute: React.FC<
         hasPermission ? EvaluationResult.Passed : EvaluationResult.Blocked
       );
     });
-  }, [session, requirePermission, currentUserHasPermission]);
+  }, [currentUser, requirePermission, currentUserHasPermission]);
 
   switch (evaluationResult) {
     case EvaluationResult.Loading:
