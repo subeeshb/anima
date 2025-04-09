@@ -9,6 +9,7 @@ import {
 import { useCallback, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isValidEmailAddress } from "../../utils/StringUtils";
+import { ServerContext } from "../../ServerContext";
 
 const RegistrationForm: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -21,47 +22,57 @@ const RegistrationForm: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const { pb, setLoginSession } = useContext(ServerContext);
 
   const onRegister = useCallback(async () => {
-    // try {
-    //   setErrorMessage(null);
-    //   setIsSaving(true);
-    //   const result = await new CreateAccountAPI().fetch({
-    //     email,
-    //     displayName,
-    //     password: newPassword,
-    //   });
-    //   setIsSaving(false);
-    //   if (result.success == false) {
-    //     setErrorMessage(
-    //       result.error ??
-    //         "Unable to create your account. Please try again later."
-    //     );
-    //   } else {
-    //     setEmail("");
-    //     setNewPassword("");
-    //     setConfirmNewPassword("");
-    //     if (result.token != null) {
-    //       setSuccessMessage(
-    //         `Your account has been created successfully. You'll be logged in in a few seconds.`
-    //       );
-    //       parseSessionFromToken(result.token, true);
-    //       window.setTimeout(() => {
-    //         navigate(
-    //           new URLSearchParams(window.location.search).get("next") ?? "/"
-    //         );
-    //       }, 3000);
-    //     } else {
-    //       setSuccessMessage(
-    //         `Your account has been created successfully. Please log in with your email address and password.`
-    //       );
-    //     }
-    //   }
-    // } catch (e: any) {
-    //   setIsSaving(false);
-    //   setErrorMessage(e?.message);
-    // }
-  }, [email, displayName, newPassword]);
+    try {
+      setErrorMessage(null);
+      setIsSaving(true);
+
+      await pb.collection("users").create({
+        password: newPassword,
+        passwordConfirm: confirmNewPassword,
+        email: email,
+        emailVisibility: false,
+        verified: false,
+        name: displayName,
+        permissions: "[]",
+      });
+
+      const loginResult = await pb
+        .collection("users")
+        .authWithPassword(email, newPassword);
+
+      setSuccessMessage(
+        `Your account has been created successfully. You'll be logged in in a few seconds.`
+      );
+      window.setTimeout(() => {
+        setLoginSession(
+          {
+            id: loginResult.record.id,
+            displayName: loginResult.record.name ?? "",
+            isVerified: loginResult.record.verified ?? false,
+            permissions: loginResult.record.permissions ?? [],
+          },
+          loginResult.token
+        );
+
+        navigate(
+          new URLSearchParams(window.location.search).get("next") ?? "/"
+        );
+      }, 3000);
+    } catch (e: any) {
+      setIsSaving(false);
+      setErrorMessage(e?.message);
+    }
+  }, [
+    email,
+    displayName,
+    newPassword,
+    confirmNewPassword,
+    pb,
+    setLoginSession,
+  ]);
 
   return (
     <>
