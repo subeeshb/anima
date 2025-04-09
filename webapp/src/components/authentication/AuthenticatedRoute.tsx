@@ -21,11 +21,7 @@ const AuthenticatedRoute: React.FC<
     requirePermission?: string;
   }>
 > = ({ children, requirePermission }) => {
-  // TODO
-  const currentUserHasPermission = async (_: string) => false;
-  // const { session, currentUserHasPermission } = useContext(AuthContext);
-
-  const { currentUser } = useContext(ServerContext);
+  const { currentUser, currentUserHasPermission } = useContext(ServerContext);
   const location = useLocation();
   const [evaluationResult, setEvaluationResult] = useState<EvaluationResult>(
     EvaluationResult.Loading
@@ -42,11 +38,11 @@ const AuthenticatedRoute: React.FC<
       return;
     }
 
-    currentUserHasPermission(requirePermission).then((hasPermission) => {
-      setEvaluationResult(
-        hasPermission ? EvaluationResult.Passed : EvaluationResult.Blocked
-      );
-    });
+    setEvaluationResult(
+      currentUserHasPermission(requirePermission)
+        ? EvaluationResult.Passed
+        : EvaluationResult.Blocked
+    );
   }, [currentUser, requirePermission, currentUserHasPermission]);
 
   switch (evaluationResult) {

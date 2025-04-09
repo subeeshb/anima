@@ -1,5 +1,5 @@
-import { PropsWithChildren, useContext, useEffect, useState } from "react";
-import { AuthContext } from "./AuthContext";
+import { PropsWithChildren, useContext, useMemo } from "react";
+import { ServerContext } from "../../ServerContext";
 
 type Props = {
   permissionName: string;
@@ -12,14 +12,11 @@ const PermissionGate: React.FC<PropsWithChildren<Props>> = ({
   permissionName,
   children,
 }) => {
-  const [hasPermission, setHasPermission] = useState(false);
-  const { currentUserHasPermission } = useContext(AuthContext);
-
-  useEffect(() => {
-    currentUserHasPermission(permissionName).then((result) => {
-      setHasPermission(result);
-    });
-  }, [currentUserHasPermission, permissionName]);
+  const { currentUserHasPermission } = useContext(ServerContext);
+  const hasPermission = useMemo(
+    () => currentUserHasPermission(permissionName),
+    [currentUserHasPermission, permissionName]
+  );
 
   return hasPermission ? children : null;
 };

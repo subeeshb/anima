@@ -1,7 +1,7 @@
 import { Button, ConfirmationDialog } from "@prima-materia/ui";
 import { ReactNode, useCallback, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "./AuthContext";
+import { ServerContext } from "../../ServerContext";
 
 type Props = {
   label?: ReactNode;
@@ -15,16 +15,16 @@ const LogoutButton: React.FC<Props> = ({
   tooltip,
 }) => {
   const navigate = useNavigate();
-  const { clearSession, session } = useContext(AuthContext);
+  const { currentUser, invalidateLoginSession } = useContext(ServerContext);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   const onLogOut = useCallback(() => {
-    clearSession();
+    invalidateLoginSession();
     navigate("/");
-  }, [clearSession]);
+  }, [invalidateLoginSession]);
 
-  if (session == null) {
+  if (currentUser == null) {
     return null;
   }
 

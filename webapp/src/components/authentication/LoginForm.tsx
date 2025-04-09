@@ -33,6 +33,7 @@ const LoginForm: React.FC = () => {
           id: result.record.id,
           displayName: result.record.name ?? "",
           isVerified: result.record.verified ?? false,
+          permissions: result.record.permissions ?? [],
         },
         result.token
       );
@@ -45,25 +46,6 @@ const LoginForm: React.FC = () => {
         e?.message ?? "Unable to log in right now. Try again later."
       );
     }
-
-    // const response = await new LoginAPI().fetch({
-    //   email,
-    //   password,
-    // });
-    // setIsLoading(false);
-
-    // if (response.error != null) {
-    //   setErrorMessage(response.error);
-    // } else {
-    //   if (response.success == false || response.token == null) {
-    //     setErrorMessage("Unable to log you in. Please try again later.");
-    //   } else {
-    //     parseSessionFromToken(response.token, true);
-    //     navigate(
-    //       new URLSearchParams(window.location.search).get("next") ?? "/"
-    //     );
-    //   }
-    // }
   }, [email, password]);
 
   return (
