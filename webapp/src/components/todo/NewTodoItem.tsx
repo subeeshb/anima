@@ -1,26 +1,13 @@
 import { TextInput } from "@prima-materia/ui";
-import { useState } from "react";
-import { useMutation } from "@apollo/client";
-import { gql } from "../../__generated__/gql";
-import { GET_TODOS, TodoItem } from "./TodoList";
-
-const CREATE_TODO = gql(`
-  mutation CreateTodo($title: String!) {
-    createTodoItem(title: $title) {
-      id
-      title
-      isCompleted
-    }
-  }
-`);
+import { useContext, useState } from "react";
+import { ServerContext } from "../../ServerContext";
 
 const NewTodoItem: React.FC = () => {
   const [title, setTitle] = useState("");
-  const [createTodo, { loading }] = useMutation<{
-    createTodo: TodoItem;
-  }>(CREATE_TODO, {
-    refetchQueries: [{ query: GET_TODOS }],
-  });
+  const [saving, setSaving] = useState(false);
+  const { pb, currentUser } = useContext(ServerContext);
+
+  if (currentUser == null) return null;
 
   return (
     <>
@@ -30,19 +17,18 @@ const NewTodoItem: React.FC = () => {
         value={title}
         onChange={setTitle}
         onHitEnter={() => {
-          createTodo({
-            variables: {
+          setSaving(true);
+          pb.collection("todo_item")
+            .create({
               title,
-            },
-          })
-            .catch((e) => {
-              console.log(e);
+              user: [currentUser.id],
+              completed: false,
             })
             .then(() => {
-              setTitle("");
+              setSaving(false);
             });
         }}
-        disabled={loading}
+        disabled={saving}
       />
     </>
   );

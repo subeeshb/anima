@@ -1,37 +1,27 @@
-import { useMutation } from "@apollo/client";
-import { gql } from "../../__generated__/gql";
 import { DelayedButton } from "@prima-materia/ui";
+import { useContext, useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
-import { GET_TODOS } from "./TodoList";
+import { ServerContext } from "../../ServerContext";
 
 type Props = {
   todoID: string;
 };
 
-const DELETE_TODO = gql(`
-  mutation DeleteTodo($id: ID!) {
-    deleteTodoItem(id: $id)
-  }
-`);
-
 const DeleteTodoItemButton: React.FC<Props> = ({ todoID }) => {
-  const [deleteTodo, { loading }] = useMutation(DELETE_TODO, {
-    refetchQueries: [{ query: GET_TODOS }],
-  });
+  const { pb } = useContext(ServerContext);
+  const [deleting, setDeleting] = useState(false);
 
   return (
     <DelayedButton
       label={<FaTrashAlt />}
       subtle
-      onClick={() => {
-        deleteTodo({
-          variables: {
-            id: todoID,
-          },
-        });
+      onClick={async () => {
+        setDeleting(true);
+        await pb.collection("todo_item").delete(todoID);
+        setDeleting(false);
       }}
       delaySeconds={2}
-      showSpinner={loading}
+      showSpinner={deleting}
     />
   );
 };
