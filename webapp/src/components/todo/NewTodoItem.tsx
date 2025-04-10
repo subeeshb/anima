@@ -1,11 +1,13 @@
 import { TextInput } from "@prima-materia/ui";
 import { useContext, useState } from "react";
 import { ServerContext } from "../../ServerContext";
+import { useTodoStore } from "./TodoList";
 
 const NewTodoItem: React.FC = () => {
   const [title, setTitle] = useState("");
   const [saving, setSaving] = useState(false);
-  const { pb, currentUser } = useContext(ServerContext);
+  const { currentUser } = useContext(ServerContext);
+  const { createItem } = useTodoStore();
 
   if (currentUser == null) return null;
 
@@ -16,17 +18,15 @@ const NewTodoItem: React.FC = () => {
         placeholder="What do you want to do?"
         value={title}
         onChange={setTitle}
-        onHitEnter={() => {
+        onHitEnter={async () => {
           setSaving(true);
-          pb.collection("todo_item")
-            .create({
-              title,
-              user: [currentUser.id],
-              completed: false,
-            })
-            .then(() => {
-              setSaving(false);
-            });
+          await createItem({
+            title,
+            user: [currentUser.id],
+            completed: false,
+          });
+          setSaving(false);
+          setTitle("");
         }}
         disabled={saving}
       />

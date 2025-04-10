@@ -1,14 +1,12 @@
 import { Checkbox } from "@prima-materia/ui";
 import React from "react";
 import DeleteTodoItemButton from "./DeleteTodoItemButton";
-import { TodoItem } from "./TodoList";
+import { TodoItem, useTodoStore } from "./TodoList";
 
 export const TodoListItem: React.FC<{
   item: TodoItem;
 }> = ({ item }) => {
-  // const [updateTodo, { loading }] = useMutation<{ updateTodo: TodoItem }>(
-
-  // );
+  const { updateItem, loading } = useTodoStore();
 
   return (
     <Checkbox
@@ -18,14 +16,11 @@ export const TodoListItem: React.FC<{
         </>
       }
       checked={item.completed}
-      // disabled={loading}
+      disabled={loading}
       onChange={(status) => {
-        // updateTodo({
-        //   variables: {
-        //     id: item.id,
-        //     is_completed: status,
-        //   },
-        // });
+        updateItem(item.id, {
+          completed: status,
+        });
       }}
     />
   );

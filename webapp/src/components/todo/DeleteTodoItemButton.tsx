@@ -1,27 +1,22 @@
 import { DelayedButton } from "@prima-materia/ui";
-import { useContext, useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
-import { ServerContext } from "../../ServerContext";
+import { useTodoStore } from "./TodoList";
 
 type Props = {
   todoID: string;
 };
 
 const DeleteTodoItemButton: React.FC<Props> = ({ todoID }) => {
-  const { pb } = useContext(ServerContext);
-  const [deleting, setDeleting] = useState(false);
+  const { deleteItem } = useTodoStore();
 
   return (
     <DelayedButton
       label={<FaTrashAlt />}
       subtle
       onClick={async () => {
-        setDeleting(true);
-        await pb.collection("todo_item").delete(todoID);
-        setDeleting(false);
+        deleteItem(todoID);
       }}
       delaySeconds={2}
-      showSpinner={deleting}
     />
   );
 };

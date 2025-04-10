@@ -1,13 +1,16 @@
 import { NoticeCard, Spinner } from "@prima-materia/ui";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TodoListItem } from "./TodoListItem";
-import { ServerContext } from "../../ServerContext";
+import { createCRUDStore } from "../../lib/PocketBaseCollection";
 
 export type TodoItem = {
   id: string;
   title: string;
   completed: boolean;
+  user: string[];
 };
+
+export const useTodoStore = createCRUDStore<TodoItem>("todo_item");
 
 const useCollectionListLoader = <TModel,>(query: () => Promise<TModel[]>) => {
   const [loading, setLoading] = useState(false);
@@ -35,20 +38,27 @@ const useCollectionListLoader = <TModel,>(query: () => Promise<TModel[]>) => {
 };
 
 const TodoList: React.FC<{}> = () => {
-  const { pb } = useContext(ServerContext);
+  // const { pb } = useContext(ServerContext);
 
-  const query = useMemo(
-    () => async () =>
-      await pb.collection<TodoItem>("todo_item").getFullList<TodoItem>({
-        requestKey: "todolist",
-      }),
-    [pb]
-  );
-  const { loading, error, results } = useCollectionListLoader(query);
+  const { items, loading, error, listItems } = useTodoStore();
+
+  useEffect(() => {
+    listItems();
+  }, [listItems]);
+
+  // const query = useMemo(
+  //   () => async () =>
+  //     await pb.collection<TodoItem>("todo_item").getFullList<TodoItem>({
+  //       requestKey: "todolist",
+  //     }),
+  //   [pb]
+  // );
+  // const { loading, error, results } = useCollectionListLoader(query);
 
   if (loading) return <Spinner />;
 
-  if (error) {
+  if (error != null) {
+    console.log(error);
     return (
       <NoticeCard type="error" title="Couldn't get todo list">
         The todo list couldn't be loaded right now.
@@ -58,7 +68,7 @@ const TodoList: React.FC<{}> = () => {
 
   return (
     <>
-      {results.map((item) => (
+      {Object.values(items).map((item) => (
         <TodoListItem key={item.id} item={item} />
       ))}
     </>
