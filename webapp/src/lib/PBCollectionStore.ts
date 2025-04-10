@@ -1,11 +1,12 @@
 import { create } from "zustand";
 import PocketBase from "pocketbase";
 
-interface CRUDState<T extends { [key: string]: any } & { id: string }> {
+interface PBState<T extends { [key: string]: any } & { id: string }> {
   items: { [id: string]: T };
   loading: boolean;
   error: Error | null;
-  listItems: () => Promise<void>;
+  loadAllItems: () => Promise<void>;
+  all: () => T[];
   createItem: (item: Omit<T, "id" | "created" | "updated">) => Promise<T>;
   updateItem: (id: string, item: Partial<T>) => Promise<T>;
   deleteItem: (id: string) => Promise<void>;
@@ -15,15 +16,15 @@ interface CRUDState<T extends { [key: string]: any } & { id: string }> {
 const API_HOSTNAME = import.meta.env.VITE_API_SERVER_URL ?? "";
 const pb = new PocketBase(API_HOSTNAME);
 
-export function createCRUDStore<
+export function createPBCollectionStore<
   T extends { [key: string]: any } & { id: string }
 >(collectionName: string) {
-  const store = create<CRUDState<T>>((set, get) => ({
+  const store = create<PBState<T>>((set, get) => ({
     items: {},
     loading: false,
     error: null,
 
-    listItems: async () => {
+    loadAllItems: async () => {
       set({ loading: true });
       try {
         const result = await pb.collection(collectionName).getList<T>();
@@ -39,6 +40,8 @@ export function createCRUDStore<
         set({ error: error as Error, loading: false });
       }
     },
+
+    all: () => Object.values(get().items),
 
     createItem: async (item) => {
       const newItem = await pb.collection(collectionName).create<T>(item);

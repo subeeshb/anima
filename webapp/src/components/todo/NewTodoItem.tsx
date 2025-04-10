@@ -1,7 +1,7 @@
 import { TextInput } from "@prima-materia/ui";
 import { useContext, useState } from "react";
 import { ServerContext } from "../../ServerContext";
-import { useTodoStore } from "./TodoList";
+import { useTodoStore } from "../../data/TodoItem";
 
 const NewTodoItem: React.FC = () => {
   const [title, setTitle] = useState("");

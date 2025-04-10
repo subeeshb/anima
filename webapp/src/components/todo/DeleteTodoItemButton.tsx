@@ -1,6 +1,6 @@
 import { DelayedButton } from "@prima-materia/ui";
 import { FaTrashAlt } from "react-icons/fa";
-import { useTodoStore } from "./TodoList";
+import { useTodoStore } from "../../data/TodoItem";
 
 type Props = {
   todoID: string;
