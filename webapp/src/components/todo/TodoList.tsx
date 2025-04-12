@@ -1,10 +1,10 @@
 import { NoticeCard, Spinner } from "@prima-materia/ui";
 import React, { useEffect } from "react";
 import { TodoListItem } from "./TodoListItem";
-import { useTodoStore } from "../../data/TodoItem";
+import { useTodoItemStore } from "../../data/TodoItem";
 
 const TodoList: React.FC<{}> = () => {
-  const { loading, error, loadAllItems, all } = useTodoStore();
+  const { loading, error, loadAllItems, all } = useTodoItemStore();
 
   useEffect(() => {
     loadAllItems();

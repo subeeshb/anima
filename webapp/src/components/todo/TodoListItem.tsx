@@ -1,12 +1,12 @@
 import { Checkbox } from "@prima-materia/ui";
 import React from "react";
 import DeleteTodoItemButton from "./DeleteTodoItemButton";
-import { TodoItem, useTodoStore } from "../../data/TodoItem";
+import { TodoItem, useTodoItemStore } from "../../data/TodoItem";
 
 export const TodoListItem: React.FC<{
   item: TodoItem;
 }> = ({ item }) => {
-  const { updateItem, loading } = useTodoStore();
+  const { updateItem, loading } = useTodoItemStore();
 
   return (
     <Checkbox

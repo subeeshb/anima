@@ -1,13 +1,13 @@
 import { TextInput } from "@prima-materia/ui";
 import { useContext, useState } from "react";
 import { ServerContext } from "../../ServerContext";
-import { useTodoStore } from "../../data/TodoItem";
+import { useTodoItemStore } from "../../data/TodoItem";
 
 const NewTodoItem: React.FC = () => {
   const [title, setTitle] = useState("");
   const [saving, setSaving] = useState(false);
   const { currentUser } = useContext(ServerContext);
-  const { createItem } = useTodoStore();
+  const { createItem } = useTodoItemStore();
 
   if (currentUser == null) return null;
 

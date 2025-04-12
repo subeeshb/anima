@@ -1,13 +1,13 @@
 import { DelayedButton } from "@prima-materia/ui";
 import { FaTrashAlt } from "react-icons/fa";
-import { useTodoStore } from "../../data/TodoItem";
+import { useTodoItemStore } from "../../data/TodoItem";
 
 type Props = {
   todoID: string;
 };
 
 const DeleteTodoItemButton: React.FC<Props> = ({ todoID }) => {
-  const { deleteItem } = useTodoStore();
+  const { deleteItem } = useTodoItemStore();
 
   return (
     <DelayedButton

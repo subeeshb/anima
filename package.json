@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev:webapp": "cd webapp && pnpm run dev",
-    "dev:server": "cd server && air serve",
+    "dev:server": "cd server && air serve --dir=./pb_data",
     "dev": "concurrently \"pnpm run dev:webapp\" \"pnpm run dev:server\"",
+    "generate-types": "cd server && go run . generate-types",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
