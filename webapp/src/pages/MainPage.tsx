@@ -25,7 +25,11 @@ const MainPage: React.FC = () => {
           footerContent={
             <>
               <PermissionGate permissionName="admin">
-                <NavLink href="/admin" label="Admin" icon={<FaLock />} />
+                <NavLink
+                  href={`${import.meta.env.VITE_API_SERVER_URL}/_`}
+                  label="Configure app"
+                  icon={<FaLock />}
+                />
               </PermissionGate>
               <UserOptionsButton />
             </>
