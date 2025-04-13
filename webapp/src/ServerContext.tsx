@@ -11,6 +11,12 @@ import {
 const API_HOSTNAME = import.meta.env.VITE_API_SERVER_URL ?? "";
 const POCKETBASE_AUTH_SESSION_KEY = "pocketbase_auth";
 
+const cachedSessionData = localStorage.getItem(POCKETBASE_AUTH_SESSION_KEY);
+let cachedSession = null;
+try {
+  if (cachedSessionData != null) cachedSession = JSON.parse(cachedSessionData);
+} catch (_) {}
+
 export type User = {
   id: string;
   displayName: string;
@@ -40,8 +46,17 @@ const ServerContext = createContext<ServerContextType>({
 const ServerContextProvider: React.FC<PropsWithChildren<{}>> = ({
   children,
 }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(
+    cachedSession != null
+      ? {
+          id: cachedSession.record.id,
+          displayName: cachedSession.record.name ?? "",
+          isVerified: cachedSession.record.verified ?? false,
+          permissions: cachedSession.record.permissions ?? [],
+        }
+      : null
+  );
+  const [token, setToken] = useState<string | null>(cachedSession?.token);
 
   const pb = useMemo(() => new PocketBase(API_HOSTNAME), []);
 
@@ -50,6 +65,7 @@ const ServerContextProvider: React.FC<PropsWithChildren<{}>> = ({
       POCKETBASE_AUTH_SESSION_KEY
     );
     if (existingSessionData != null) {
+      // Set the cached session data first, then reauth.
       pb.collection("users")
         .authRefresh()
         .then((result) => {
