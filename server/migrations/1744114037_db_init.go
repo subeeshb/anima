@@ -8,6 +8,8 @@ import (
 
 func init() {
 	m.Register(func(app core.App) error {
+		collections.AddPermissionsToUsersCollection(app)
+
 		collections.CreateTodoItemCollection(app)
 
 		return nil

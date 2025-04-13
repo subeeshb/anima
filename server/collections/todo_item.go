@@ -12,6 +12,7 @@ func CreateTodoItemCollection(app core.App) {
 	collection := core.NewBaseCollection("todo_item")
 
 	// set rules
+	collection.ListRule = types.Pointer("@request.auth.id != '' && user = @request.auth.id")
 	collection.ViewRule = types.Pointer("@request.auth.id != '' && user = @request.auth.id")
 	collection.CreateRule = types.Pointer("@request.auth.id != ''")
 	collection.UpdateRule = types.Pointer(`
@@ -31,8 +32,7 @@ func CreateTodoItemCollection(app core.App) {
 	})
 
 	collection.Fields.Add(&core.BoolField{
-		Name:     "completed",
-		Required: true,
+		Name: "completed",
 	})
 
 	// Add relation field to users
