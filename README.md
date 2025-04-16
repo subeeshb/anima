@@ -1,5 +1,9 @@
 # anima
 
+A web app stack with a React front-end and a PocketBase backend using Go.
+
+⚠️ WIP
+
 ## Setup
 
 1. Install Go
